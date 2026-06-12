@@ -1,3 +1,6 @@
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv4first");
+
 if(process.env.NODE_ENV !="production")
 {
     require('dotenv').config()
@@ -22,7 +25,7 @@ const passport=require('passport');
 const LocalStrategy= require('passport-local');
 const User=require('./models/user.js');
 
-
+console.log(process.env.ATLASDB_URL);
 const dbUrl= process.env.ATLASDB_URL;
 
  main().then(()=>{
@@ -47,7 +50,7 @@ const store=MongoStore.create({
   },
   touchAfter: 24 * 3600
 });
- store.on("error" ,()=>{
+ store.on("error" ,(err)=>{
     console.log("ERROR in Mongo Session store " , err)
  });
 
@@ -99,11 +102,6 @@ app.use("/listings" , listingRouter);
 app.use("/listings/:id/reviews" ,reviewRouter);
 app.use("/" ,userRouter);
 
- //error handling issue for route other than mention
-// app.all("*", (req, res, next) => {
-//     const err = new ExpressError(404, "Page Not Found");
-//     next(err);
-//   });
 
 app.use((err,req,res,next)=>{
     
